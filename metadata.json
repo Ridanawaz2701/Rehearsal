@@ -1,0 +1,6 @@
+{
+  "name": "Rehearsal",
+  "description": "Practice the hard conversation before you have it.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
