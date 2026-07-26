@@ -2,21 +2,20 @@
 
 *Practice the hard conversation before you have it.*
 
-**Live app:** [https://your-app-url-here.onrender.com](https://your-app-url-here.onrender.com) ← replace with your real deployed URL
-
+**Live app:** [https://rehearsal-bice.vercel.app](https://rehearsal-bice.vercel.app)
 ---
-
 ## The problem
-
 Most people rehearse hard conversations in their head — in the shower, on the drive to work, lying awake at night. Then the real conversation goes nowhere near how they practiced it, because they were never actually talking to anyone. They were talking to a version of the other person who agrees too easily, backs down too fast, or says exactly what they hoped to hear.
-
 This happens before salary negotiations, before telling a roommate to stop having people over uninvited, before confronting a friend who keeps flaking, before asking a manager for something uncomfortable, before family conflicts that have been avoided for months.
 
 **Who this is for:** anyone about to have a conversation they're dreading and want to walk in prepared, not just hopeful. Students negotiating with landlords or group project partners, employees preparing for reviews or raises, roommates trying to set a boundary, or anyone who tends to freeze up or lose their nerve mid-conversation.
 
 Rehearsal solves this by giving people something to actually practice against: an AI that plays the other person realistically — including the parts that resist, deflect, or get defensive — so the real conversation isn't the first time they've said the words out loud.
+
 ---
+
 ## Features
+
 - **Situation setup** — describe the conversation you're dreading in your own words, or pick from quick-start examples (salary review, roommate boundaries, relationship conflict, family holiday tension, unreliable friend).
 - **Personality archetypes** — choose who you're rehearsing against: The Avoider, The Defensive One, The Guilt-Tripper, The Cold Negotiator, The Over-Apologizer, or write a custom description of the specific person you're dealing with.
 - **Live in-character roleplay** — a full-screen, distraction-free chat interface where the AI stays fully in character and pushes back realistically, rather than caving the moment you make a good point.
@@ -26,8 +25,8 @@ Rehearsal solves this by giving people something to actually practice against: a
   - *Try saying it like this instead* — concrete alternative phrasings for your weakest moment
   - *How this might actually go* — an honest, non-flattering prediction of the real conversation
 - **Multi-language support** — rehearse and receive your debrief in English, Urdu, Spanish, French, or Arabic.
-- **Past rehearsals history** — revisit any previous session and its debrief.
-- **Optional Google Sign-In** — sign in to attach your name and photo to your sessions; the app works fully in guest mode without an account.
+- **Past rehearsals history** — revisit any previous session and its debrief, synced across devices when signed in.
+- **Google Sign-In with cloud sync** — sign in to save your rehearsal history to your account via Firebase, accessible from any device or browser. The app also works fully in guest mode (device-local storage) without an account.
 - **Editorial, distraction-free design** — a calm, serif-typography interface with no cartoon elements, no gamified pressure, and a full-screen chat mode designed to feel like a private rehearsal space, not a chatbot demo.
 
 ---
@@ -107,31 +106,32 @@ This is deliberately designed to force specificity — the model must quote the 
 
 - **Google AI Studio** — used to build and iteratively design the app
 - **Google Gemini API** (`gemini-3.6-flash`, via `@google/genai`) — powers both the roleplay engine and the debrief engine
-- **Firebase Authentication** — Google Sign-In (optional; app works fully in guest mode without it)
+- **Firebase Authentication** — Google Sign-In
+- **Firebase Firestore** — cloud storage for rehearsal session history, scoped per signed-in user with security rules restricting access to each user's own data
 - **React + TypeScript + Vite** — frontend
-- **Express** — backend API server
+- **Vercel Serverless Functions** — backend API routes (roleplay + debrief endpoints)
 - **Tailwind CSS** — styling
 - **Framer Motion** (`motion`) — page transitions and micro-animations
-- **[Your hosting provider — Render/Vercel]** — deployment
+- **Vercel** — deployment
 
 ---
 
 ## Screenshots
 
-*(Replace these placeholders with real screenshots before submitting — see the checklist below)*
-
-1. **Landing page / hero** — `screenshots/01-landing.png`
-2. **Start rehearsal — situation + archetype selection** — `screenshots/02-setup.png`
-3. **Live rehearsal chat in progress** — `screenshots/03-chat.png`
-4. **Debrief screen with structured feedback** — `screenshots/04-debrief.png`
-5. **Past rehearsals history** — `screenshots/05-history.png` *(optional 5th)*
-
-```markdown
 ![Landing page](screenshots/01-landing.png)
+*Landing page — hero section introducing Rehearsal*
+
 ![Setup screen](screenshots/02-setup.png)
+*Describing the situation and selecting a personality archetype*
+
 ![Live chat](screenshots/03-chat.png)
+*Live in-character rehearsal in progress*
+
 ![Debrief](screenshots/04-debrief.png)
-```
+*Structured debrief with quoted strong/weak moments and alternative phrasings*
+
+![Past rehearsals](screenshots/05-history.png)
+*Past rehearsals history, synced via Firestore for signed-in users*
 
 ---
 
@@ -140,7 +140,7 @@ This is deliberately designed to force specificity — the model must quote the 
 ### Prerequisites
 - Node.js 18+
 - A Google Gemini API key ([aistudio.google.com](https://aistudio.google.com))
-- (Optional) A Firebase project with Google Sign-In enabled, if you want to test authentication locally
+- A Firebase project with Google Sign-In and Firestore enabled, if you want to test authentication and cloud sync locally
 
 ### Setup
 
@@ -161,7 +161,7 @@ Fill in `.env` with:
 ```env
 GEMINI_API_KEY=your_gemini_api_key_here
 
-# Optional — only needed if testing Google Sign-In locally
+# Firebase config — needed for Google Sign-In and Firestore sync
 VITE_FIREBASE_API_KEY=
 VITE_FIREBASE_AUTH_DOMAIN=
 VITE_FIREBASE_PROJECT_ID=
@@ -171,23 +171,24 @@ VITE_FIREBASE_APP_ID=
 ```
 
 ```bash
-# 4. Run the dev server (Express + Vite on port 3000)
+# 4. Run the dev server
 npm run dev
 ```
 
-Open `http://localhost:3000`.
+Open `http://localhost:3000` (or the port shown in your terminal).
 
 ### Deployment
 
-This app is deployed on **[Render/Vercel — pick the one you used]**:
-1. Connect the GitHub repository to your hosting provider
-2. Set the environment variables listed above in the hosting dashboard (never commit them to the repo)
-3. Build command: `npm run build` · Start command: `npm start`
-4. If using Google Sign-In, add your live deployed domain to **Firebase Console → Authentication → Settings → Authorized domains**
+This app is deployed on **Vercel**:
+1. Connect the GitHub repository to Vercel
+2. Vercel auto-detects the Vite frontend and `/api` serverless functions
+3. Set the environment variables listed above in the Vercel project settings (never commit them to the repo)
+4. Build command: `npm run build`
+5. Add your live Vercel domain to **Firebase Console → Authentication → Settings → Authorized domains**, so Google Sign-In works correctly on the deployed URL
 
 ---
 
 ## Known limitations (being upfront)
 
-- Session history is stored in the browser (`localStorage`), not a persistent database — history won't sync across different devices or browsers. A database-backed version (e.g. Firebase Firestore or Postgres) is a natural next step.
-- Google Sign-In currently personalizes the experience (name/photo) but doesn't yet enable true cross-device account sync, for the same reason above.
+- Guest mode (not signed in) stores sessions only in the browser (`localStorage`) — that history is local to that device/browser only. Signing in with Google moves session storage to Firestore, giving full cross-device sync.
+- The Gemini model used (`gemini-3.6-flash`) is called via Vercel serverless functions; extremely rapid consecutive messages may occasionally hit rate limits on the free API tier.
